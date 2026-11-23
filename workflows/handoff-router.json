@@ -1,0 +1,288 @@
+{
+  "name": "Chatbot Handoff Router",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "maple-handoff",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "53b36446-df49-5b36-a0c8-cbd19d295521",
+      "name": "Handoff Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        200
+      ],
+      "webhookId": "85089d45-29a4-5e46-bcc5-4907fb73013a"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "a1",
+              "name": "handoff_id",
+              "value": "={{ $json.body.handoff_id }}",
+              "type": "string"
+            },
+            {
+              "id": "a2",
+              "name": "reason",
+              "value": "={{ $json.body.reason }}",
+              "type": "string"
+            },
+            {
+              "id": "a3",
+              "name": "channel",
+              "value": "={{ $json.body.channel }}",
+              "type": "string"
+            },
+            {
+              "id": "a4",
+              "name": "session_id",
+              "value": "={{ $json.body.session_id }}",
+              "type": "string"
+            },
+            {
+              "id": "a5",
+              "name": "created_at",
+              "value": "={{ new Date($json.body.created_at * 1000).toISOString() }}",
+              "type": "string"
+            },
+            {
+              "id": "a6",
+              "name": "last_customer_message",
+              "value": "={{ ($json.body.transcript.filter(t => t.role === 'user').slice(-1)[0] || {}).content || '' }}",
+              "type": "string"
+            },
+            {
+              "id": "a7",
+              "name": "transcript_text",
+              "value": "={{ $json.body.transcript.map(t => (t.role === 'user' ? 'Customer: ' : 'Bot: ') + t.content).join('\\n') }}",
+              "type": "string"
+            },
+            {
+              "id": "a8",
+              "name": "urgent",
+              "value": "={{ /bleed|swell|knocked|fever|severe|emergency|can't breathe|cannot breathe|trauma/i.test($json.body.transcript.map(t => t.content).join(' ')) }}",
+              "type": "boolean"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "3740b002-c97f-5d42-9b9a-697c967e7de8",
+      "name": "Prepare Handoff Fields",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1",
+              "leftValue": "={{ $json.urgent }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "78939542-34c6-54b5-8780-5eaea65c9b59",
+      "name": "Is It Urgent?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        480,
+        200
+      ]
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#dental-urgent",
+          "mode": "name"
+        },
+        "text": "=*URGENT* handoff {{ $json.handoff_id }} ({{ $json.channel }})\nReason: {{ $json.reason }}\n\n{{ $json.transcript_text }}",
+        "otherOptions": {}
+      },
+      "id": "4a123fd7-70c2-5ff8-a91f-6afd9af72800",
+      "name": "Alert Urgent Channel",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        740,
+        100
+      ],
+      "credentials": {
+        "slackApi": {
+          "id": "",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "select": "channel",
+        "channelId": {
+          "__rl": true,
+          "value": "#front-desk",
+          "mode": "name"
+        },
+        "text": "=New handoff {{ $json.handoff_id }} ({{ $json.channel }})\nReason: {{ $json.reason }}\n\n{{ $json.transcript_text }}",
+        "otherOptions": {}
+      },
+      "id": "f6729ea8-cea3-59cc-9347-3c0bc1dea7ec",
+      "name": "Notify Front Desk Channel",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.3,
+      "position": [
+        740,
+        300
+      ],
+      "credentials": {
+        "slackApi": {
+          "id": "",
+          "name": "Slack account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_SPREADSHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Handoffs",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Handoff ID": "={{ $('Prepare Handoff Fields').item.json.handoff_id }}",
+            "Created": "={{ $('Prepare Handoff Fields').item.json.created_at }}",
+            "Channel": "={{ $('Prepare Handoff Fields').item.json.channel }}",
+            "Reason": "={{ $('Prepare Handoff Fields').item.json.reason }}",
+            "Urgent": "={{ $('Prepare Handoff Fields').item.json.urgent }}",
+            "Session": "={{ $('Prepare Handoff Fields').item.json.session_id }}",
+            "Last customer message": "={{ $('Prepare Handoff Fields').item.json.last_customer_message }}"
+          },
+          "matchingColumns": [],
+          "schema": []
+        },
+        "options": {}
+      },
+      "id": "0625bb83-48da-5f8a-829c-0b824bb7e4cc",
+      "name": "Log to Google Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        1000,
+        200
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Handoff Webhook": {
+      "main": [
+        [
+          {
+            "node": "Prepare Handoff Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Handoff Fields": {
+      "main": [
+        [
+          {
+            "node": "Is It Urgent?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is It Urgent?": {
+      "main": [
+        [
+          {
+            "node": "Alert Urgent Channel",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Notify Front Desk Channel",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Alert Urgent Channel": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify Front Desk Channel": {
+      "main": [
+        [
+          {
+            "node": "Log to Google Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "id": "9a3deaf6-baf8-525f-ba1d-6277d17180be",
+  "versionId": "39da3380-212f-53d0-9cf9-2ac9ad240cb3",
+  "tags": []
+}

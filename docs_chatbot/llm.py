@@ -54,6 +54,7 @@ class MockLLM:
         parts = []
         for _, _, u in picked:
             u = re.sub(r"^[-*]\s+", "", u).strip()
+            u = u.rstrip(":").rstrip()
             parts.append(u if u[-1] in ".!?" else u + ".")
         used_idx = sorted({pi for pi, _, _ in picked})
         citations = [{"doc": used[i].chunk.doc, "section": used[i].chunk.section} for i in used_idx]

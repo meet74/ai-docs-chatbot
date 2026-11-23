@@ -49,7 +49,7 @@
     "services-and-prices.md"
    ],
    "citation_ok": true,
-   "answer": "Root canal treatment is priced by tooth position:. Molar: $1,290. A crown is usually needed after a root canal on a molar."
+   "answer": "Root canal treatment is priced by tooth position. Molar: $1,290. A crown is usually needed after a root canal on a molar."
   },
   {
    "id": 3,
@@ -338,7 +338,7 @@
     "emergency-guidance.md"
    ],
    "citation_ok": true,
-   "answer": "Go to the nearest hospital emergency room, or call 911, if you have:. If you are in severe pain at night and cannot wait, go to an emergency room."
+   "answer": "Go to the nearest hospital emergency room, or call 911, if you have. If you are in severe pain at night and cannot wait, go to an emergency room."
   },
   {
    "id": 20,
@@ -611,5 +611,5 @@
    "answer": "I can only help with questions about Maple Grove Dental. Is there something about our services, hours or policies I can look up for you?"
   }
  ],
- "seconds": 0.28
+ "seconds": 0.21
 }
