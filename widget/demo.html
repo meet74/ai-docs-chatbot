@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maple Grove Dental</title>
+<style>
+  :root { --green:#1f7a5c; --ink:#1c2733; --soft:#eef4f1; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: Georgia, "Times New Roman", serif; color:var(--ink); background:#fbfaf7; }
+  header { display:flex; justify-content:space-between; align-items:center; padding:18px 6vw; border-bottom:1px solid #e5e1d6; }
+  header strong { font-size:22px; color:var(--green); letter-spacing:.2px; }
+  nav a { margin-left:22px; color:var(--ink); text-decoration:none; font-family:system-ui,sans-serif; font-size:14px; }
+  .hero { padding:64px 6vw 48px; max-width:900px; }
+  .hero h1 { font-size:44px; line-height:1.1; margin:0 0 16px; }
+  .hero p { font-size:19px; line-height:1.5; max-width:640px; color:#44505c; }
+  .cta { display:inline-block; margin-top:14px; background:var(--green); color:#fff; padding:12px 22px; border-radius:8px; font-family:system-ui,sans-serif; text-decoration:none; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; padding:0 6vw 60px; }
+  .card { background:var(--soft); border-radius:12px; padding:20px; font-family:system-ui,sans-serif; }
+  .card h3 { margin:0 0 6px; font-size:16px; } .card p { margin:0; font-size:14px; color:#44505c; line-height:1.45; }
+  footer { padding:24px 6vw; font:13px system-ui,sans-serif; color:#667; border-top:1px solid #e5e1d6; }
+</style>
+</head>
+<body>
+<header>
+  <strong>Maple Grove Dental</strong>
+  <nav><a href="#">Services</a><a href="#">New patients</a><a href="#">Locations</a><a href="#">Book online</a></nav>
+</header>
+<section class="hero">
+  <h1>Gentle dental care for Toronto families.</h1>
+  <p>Two clinics, evening hours on Tuesdays and Thursdays, and direct billing to most insurers. This page is a fictional demo site for the chat assistant in the corner.</p>
+  <a class="cta" href="#">Book an appointment</a>
+</section>
+<section class="cards">
+  <div class="card"><h3>Danforth</h3><p>100 Maple Grove Lane<br>(416) 555-0142</p></div>
+  <div class="card"><h3>Lakeshore</h3><p>2200 Example Street, Unit 4<br>(416) 555-0178</p></div>
+  <div class="card"><h3>Emergencies</h3><p>Same-day slots every day.<br>After hours: (416) 555-0199</p></div>
+</section>
+<footer>Fictional business for demonstration purposes only.</footer>
+<script src="/widget/chat.js" data-api="" data-title="Maple Grove Dental" defer></script>
+</body>
+</html>

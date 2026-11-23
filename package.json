@@ -1,0 +1,14 @@
+{
+  "name": "ai-docs-chatbot-widget",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Widget tests for the AI Docs Chatbot",
+  "license": "MIT",
+  "author": "Sahajix",
+  "scripts": {
+    "test": "node --test widget/test/*.test.js"
+  },
+  "devDependencies": {
+    "jsdom": "^31.0.1"
+  }
+}
